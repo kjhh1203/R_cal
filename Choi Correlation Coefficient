@@ -1,0 +1,75 @@
+player_ccc <- read.csv("player_ccc.csv", header=TRUE)
+
+# 예측할 대상
+x<- player_ccc[1:6, 3:7]
+# 비교 대상
+y <- player_ccc[8:13, 3:7]
+#scaled.x <- scale(x)
+mean_x <- colMeans(x)
+mean_y <- colMeans(y)
+x_1 <- player_ccc[1,3:7]
+y_1 <- player_ccc[8,3:7]
+#분자
+x_sub_mean_x <- (x_1-mean_x)
+y_sub_mean_y <- (y_1-mean_y)
+xy_mul_1 <- x_sub_mean_x %*% y_sub_mean_y
+sum_xy_mul <- sum(xy_mul_1)
+#분모
+x_sub_mean_sq <- (x_sub_mean_x)^2
+y_sub_mean_sq <- (y_sub_mean_y)^2
+sum_x_mean_sq <- sum(x_sub_mean_sq)
+sum_y_mean_sq <- sum(y_sub_mean_sq)
+sqrt_x <- sqrt(sum_x_mean_sq/1)
+sqrt_y <- sqrt(sum_y_mean_sq/1)
+sqrt_mul_xy <- sqrt_x %*% sqrt_y
+#결과
+result <- sum_xy_mul/sqrt_mul_xy
+
+CCC<-function(){
+  result_all<-0
+  k<-1
+  repeat{
+    if(k>382*7) break
+    #if(k>2*7) break
+    print(paste(k,"for문 첫번째"));
+    # 예측할 대상
+    x<- player_ccc[k:k+5, 3:7]
+    mean_x <- colMeans(x)
+    i<-k
+    repeat{
+      sum_xy_mul<-0
+      sum_x_mean_sq <-0
+      sum_y_mean_sq <-0
+      if(i>382*7) break
+      # 비교 대상
+      y <- player_ccc[i:i+5, 3:7]
+      mean_y <- colMeans(y)
+      for(m in 0:4){
+        x_i <- player_ccc[k+m,3:7]
+        y_i <- player_ccc[i+m,3:7]
+        #분자
+        x_sub_mean_x <- (x_i-mean_x)
+        y_sub_mean_y <- (y_i-mean_y)
+        xy_mul_i <- as.numeric(x_sub_mean_x) %*% as.numeric(y_sub_mean_y)
+        sum_xy_mul <- xy_mul_i+sum_xy_mul
+        # 분모
+        x_sub_mean_sq <- as.numeric(x_sub_mean_x)%*%as.numeric(x_sub_mean_x)
+        y_sub_mean_sq <- as.numeric(y_sub_mean_y)%*%as.numeric(y_sub_mean_y)
+        sum_x_mean_sq <- x_sub_mean_sq+sum_x_mean_sq
+        sum_y_mean_sq <- y_sub_mean_sq+sum_y_mean_sq    
+      }
+    sqrt_x <- sqrt(sum_x_mean_sq/6)
+    sqrt_y <- sqrt(sum_y_mean_sq/6)
+    sqrt_mul_xy <- sqrt_x *sqrt_y
+    #결과
+    result <- sum_xy_mul/sqrt_mul_xy
+    result_all <- append(result_all, result)
+    i<-i+7
+    }
+    k<-k+7
+  }
+  return(result_all)
+}
+
+result_1101 <- CCC()
+write.csv(result_1101, "ccc_result_1101.csv")
