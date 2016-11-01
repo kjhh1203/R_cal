@@ -1,0 +1,42 @@
+p1d = read.table(file='D:/JH/workspace/matrix_mlbAndkbo/out_0513_norm_p.txt', sep=',')
+h1d = read.table(file='D:/JH/workspace/matrix_mlbAndkbo/out_0513_norm.txt', sep=',')
+
+
+write.csv(h1d, "all_norm.csv")
+write.csv(p1d, "all_norm_p.csv")
+
+A_norm <- read.csv("all_norm_m.csv", header=FALSE)
+B_norm <- read.csv("all_norm_p_m.csv", header=FALSE)
+
+x0 <- matrix(1/1978, nrow=1978, ncol=1)
+y0 <- matrix(1/2323, nrow=2323, ncol=1)
+
+
+A_norm <- data.matrix(A_norm)
+B_norm <- data.matrix(B_norm)
+A_norm<-A_norm*1000000000000000
+B_norm<-B_norm*1000000000000000
+At_norm <- t(A_norm)
+
+#돌릴 함수
+HITS<-function(at,b,x0,k)
+{
+  x1 <- at %*% b %*% x0
+  x1 <- x1/sum(x1)*1000
+  for(i in 1:k){
+    x2 <- at %*% b %*% x1
+    x2 <- x2/sum(x2)
+    S <- sum(abs(x2-x1))
+    if((0<=S) && (S<0.0000000001))        {print(paste(i,"첫번째")); return(x2);}
+    else if((S<=0) && (S>=-0.0000000001)) {print(paste(i,"두번째")); return(x2);}
+    else                                      {print(paste(i,"3번째")); x1 <- x2;} 
+  }
+  result <- x2
+  return(result)
+}
+
+result_norm <- HITS(At_norm,B_norm,x0,1000)
+result_norm_p <- HITS(B_norm,At_norm,y0,1000)
+
+write.csv(result_norm, "result_0513_norm.csv")
+write.csv(result_norm_p, "result_0513_norm_p.csv")
