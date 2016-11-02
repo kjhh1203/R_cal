@@ -33,7 +33,7 @@ CCC<-function(){
     #if(k>2*7) break
     print(paste(k,"for문 첫번째"));
     # 예측할 대상
-    x<- player_ccc[k:k+5, 3:7]
+    x<- player_ccc[k:(k+5), 3:7]
     mean_x <- colMeans(x)
     i<-k
     repeat{
@@ -42,11 +42,11 @@ CCC<-function(){
       sum_y_mean_sq <-0
       if(i>382*7) break
       # 비교 대상
-      y <- player_ccc[i:i+5, 3:7]
+      y <- player_ccc[i:(i+5), 3:7]
       mean_y <- colMeans(y)
-      for(m in 0:4){
-        x_i <- player_ccc[k+m,3:7]
-        y_i <- player_ccc[i+m,3:7]
+      for(m in 1:6){
+        x_i <- player_ccc[(k+m-1),3:7]
+        y_i <- player_ccc[(i+m-1),3:7]
         #분자
         x_sub_mean_x <- (x_i-mean_x)
         y_sub_mean_y <- (y_i-mean_y)
